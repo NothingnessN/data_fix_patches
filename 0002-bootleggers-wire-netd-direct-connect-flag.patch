@@ -1,0 +1,63 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: NothingnessN <NothingnessN@users.noreply.github.com>
+Date: Tue, 24 Nov 2026 12:00:00 +0000
+Subject: [PATCH 2/2] bootleggers: wire the netd directly-connected compatibility flag
+
+Export TARGET_NEEDS_NETD_DIRECT_CONNECT_RULE through the existing
+bootleggersGlobalVars namespace and provide the defaults consumed
+by libnetd_server. The on7xelte device baseline already enables
+this target flag; no device or proprietary vendor edit is needed.
+
+Untested: application checked against the pinned public Bootleggers
+vendor configuration; no ROM build or runtime test was performed.
+
+---
+ config/BoardConfigSoong.mk |    2 ++
+ build/soong/Android.bp     |   17 +++++++++++++++++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/config/BoardConfigSoong.mk b/config/BoardConfigSoong.mk
+--- a/config/BoardConfigSoong.mk
++++ b/config/BoardConfigSoong.mk
+@@ -30,6 +30,7 @@
+     has_legacy_camera_hal1 \
+     gralloc_handle_has_reserved_size \
+     needs_camera_boottime \
++    needs_netd_direct_connect_rule \
+     target_init_vendor_lib \
+     target_inputdispatcher_skip_event_key \
+     target_ld_shim_libs \
+@@ -58,6 +59,7 @@
+ SOONG_CONFIG_bootleggersGlobalVars_gralloc_handle_has_reserved_size := $(TARGET_GRALLOC_HANDLE_HAS_RESERVED_SIZE)
+ SOONG_CONFIG_bootleggersGlobalVars_has_legacy_camera_hal1 := $(TARGET_HAS_LEGACY_CAMERA_HAL1)
+ SOONG_CONFIG_bootleggersGlobalVars_needs_camera_boottime := $(TARGET_CAMERA_BOOTTIME_TIMESTAMP)
++SOONG_CONFIG_bootleggersGlobalVars_needs_netd_direct_connect_rule := $(TARGET_NEEDS_NETD_DIRECT_CONNECT_RULE)
+ SOONG_CONFIG_bootleggersGlobalVars_uses_egl_display_array := $(TARGET_USES_EGL_DISPLAY_ARRAY)
+ SOONG_CONFIG_bootleggersNvidiaVars_uses_nv_enhancements := $(NV_ANDROID_FRAMEWORK_ENHANCEMENTS)
+ SOONG_CONFIG_bootleggersQcomVars_supports_extended_compress_format := $(AUDIO_FEATURE_ENABLED_EXTENDED_COMPRESS_FORMAT)
+diff --git a/build/soong/Android.bp b/build/soong/Android.bp
+--- a/build/soong/Android.bp
++++ b/build/soong/Android.bp
+@@ -401,3 +401,20 @@
+         },
+     },
+ }
++
++soong_config_module_type {
++    name: "needs_netd_direct_connect_rule",
++    module_type: "cc_defaults",
++    config_namespace: "bootleggersGlobalVars",
++    bool_variables: ["needs_netd_direct_connect_rule"],
++    properties: ["cppflags"],
++}
++
++needs_netd_direct_connect_rule {
++    name: "needs_netd_direct_connect_rule_defaults",
++    soong_config_variables: {
++        needs_netd_direct_connect_rule: {
++            cppflags: ["-DNEEDS_NETD_DIRECT_CONNECT_RULE"],
++        },
++    },
++}
+-- 
+2.43.0
