@@ -1,4 +1,4 @@
-# Bootleggers Android 13 Samsung mobile-data compatibility series
+# J7 Prime Android 13 Samsung mobile-data compatibility series
 
 **Local only. Application checked; unbuilt and runtime-untested.** These are format-patch-compatible, zero-commit mboxes; no source commit was created here. Do not apply the older `ROM_ONLY_NETD_DIRECT_CONNECT_RULE_PROPOSAL.patch` as well as this series.
 
